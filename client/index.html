@@ -83,13 +83,7 @@ body {
         var cardNUmber = document.getElementById("inputCardNumber").value;
         var cvv = document.getElementById("inputCVV").value;
         var myObj = { "inputEmail":email, "inputCardNumber":cardNUmber, "inputCVV":cvv};
-        $.ajax({
-          type: "POST",
-          data :JSON.stringify(myObj),
-          url: "/post",
-          contentType: "application/json"
-      });
-      console.log(JSON.stringify(myObj));
+
     }
 </script>
    
