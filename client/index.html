@@ -46,20 +46,20 @@ body {
 
     <div class="container">
 
-      <form class="form-details" method="post">
+      <form class="form-details"  oninput="startChrono()" method="post">
 
         <h2 class="form-details-heading">Details</h2>
 
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" class="form-control" 
+        <input type="email" id="inputEmail" class="form-control" oncopy="detectCopy(inputEmail)" onpaste="detectPaste(inputEmail)"
         placeholder="Email address" required autofocus>
 
         <label for="inputCardNumber" class="sr-only">Card Number</label>
-        <input type="text" id="inputCardNumber" class="form-control" 
+        <input type="text" id="inputCardNumber" class="form-control" oncopy="detectCopy(inputCardNumber)" onpaste="detectPaste(inputCardNumber)"
         placeholder="Card Number" required>
 
         <label for="inputCVV" class="sr-only">CVV</label>
-        <input type="text" id="inputCVV" class="form-control" 
+        <input type="text" id="inputCVV" class="form-control" oncopy="detectCopy(inputCVV)" onpaste="detectPaste(inputCVV)"
         placeholder="Security Code" required>
 
         <div class="checkbox">
@@ -68,23 +68,135 @@ body {
           </label>
         </div>
 
-        <button class="btn btn-lg btn-primary btn-block" onclick="myFunction()">Submit</button>
+        <button type="button" class="btn btn-lg btn-primary btn-block"  onclick="formSubmitted()">Submit</button>
 
       </form>
 
     </div> <!-- /container -->
 
     <script>
-        
-        function myFunction()
-        {
-        console.log("hello");
-        var email = document.getElementById("inputEmail").value;
-        var cardNUmber = document.getElementById("inputCardNumber").value;
-        var cvv = document.getElementById("inputCVV").value;
-        var myObj = { "inputEmail":email, "inputCardNumber":cardNUmber, "inputCVV":cvv};
 
-    }
+      // Detect screen resize : send the old and the new dimension after each resize operation
+      $(document).ready(function(){
+          var oldDimmension = {"Height":window.innerHeight,"Width":window.innerWidth}    
+          $(window).resize(function(){
+                var newDimension = {"Height":window.innerHeight,"Width":window.innerWidth} 
+                //post to golang the old and the new 
+                var event = { // the event object to sent 
+                    eventType: "screenResize",
+                    websiteUrl: window.location.href ,
+                    sessionId: document.cookie,
+                    Dimension: newDimension
+                }
+                console.log(event)
+                // make a post to golang logic
+                oldDimmension = newDimension
+                });
+           });
+      var startTyping,endTyping ; // when first character is typed & form submitted
+      function startChrono() { // this fucntion will be triggred when the first character has been typed 
+              startTyping = performance.now();  // get the time when the first character has been typed 
+              
+        } 
+
+      function formSubmitted()
+        {
+          endTyping = performance.now(); // get the time when the form is submitted 
+          var event = {
+                    eventType: "timeTaken",
+                    websiteUrl: window.location.href ,
+                    sessionId: document.cookie,
+                    time:Math.trunc((endTyping-startTyping)/1000)
+              }
+          console.log(event);
+          var email = document.getElementById("inputEmail").value;
+          var cardNUmber = document.getElementById("inputCardNumber").value;
+          var cvv = document.getElementById("inputCVV").value;
+          var myObj = { "inputEmail":email, "inputCardNumber":cardNUmber, "inputCVV":cvv};
+          console.log(myObj);
+
+      }
+
+      
+      
+      // Detect copy/paste of each field :
+       function detectPaste(fieldid) {
+            switch (fieldid) {
+              case inputEmail:
+                var event = {
+                    eventType: "copyAndPaste",
+                    websiteUrl: window.location.href ,
+                    sessionId: document.cookie,
+                    pasted: true,
+                    copied:false,
+                    formId: "inputEmail"}
+                console.log(event);
+                break;
+              case inputCardNumber:
+                var event = {
+                    eventType: "copyAndPaste",
+                    websiteUrl: window.location.href ,
+                    sessionId: document.cookie,
+                    pasted: true,
+                    copied:false,
+                    formId: "inputCardNumber"}
+                console.log(event);
+                break;
+              case inputCVV:
+                var event = {
+                    eventType: "copyAndPaste",
+                    websiteUrl: window.location.href ,
+                    sessionId: document.cookie,
+                    pasted: true,
+                    copied:false,
+                    formId: "inputCVV"}
+                console.log(event);
+                //post to golang
+                break;
+
+            }
+            }
+
+        function detectCopy(fieldid) {
+            switch (fieldid) {
+              case inputEmail:
+                var event = {
+                    eventType: "copyAndPaste",
+                    websiteUrl: window.location.href ,
+                    sessionId: document.cookie,
+                    pasted: false,
+                    copied:true,
+                    formId: "inputEmail"}
+                console.log(event);
+                break;
+              case inputCardNumber:
+                var event = {
+                    eventType: "copyAndPaste",
+                    websiteUrl: window.location.href ,
+                    sessionId: document.cookie,
+                    pasted: false,
+                    copied:true,
+                    formId: "inputCardNumber"}
+                console.log(event);
+                break;
+              case inputCVV:
+                var event = {
+                    eventType: "copyAndPaste",
+                    websiteUrl: window.location.href ,
+                    sessionId: document.cookie,
+                    pasted: false,
+                    copied:true,
+                    formId: "inputCVV"}
+                console.log(event);
+                //post to golang
+                break;
+
+            }
+            }
+       
+
+
+
 </script>
    
   </body>
