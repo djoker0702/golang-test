@@ -11,7 +11,7 @@ import (
 func main() {
 
 	http.HandleFunc("/", handleHttpRequest)
-	http.HandleFunc("/post", handlepost)
+	//http.HandleFunc("/post", handlepost)
 	http.HandleFunc("/helloworld", helloWorldHandler)
 	fmt.Println("Server now running on localhost:8080")
 	fmt.Println(`Try running: curl -X POST -d '{"hello":"test123"}' http://localhost:8080/helloworld`)
@@ -28,7 +28,7 @@ func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
 	
 		http.ServeFile(w,r,"../client/index.html")
 }
-func handlepost(w http.ResponseWriter, r *http.Request)  {
+/*func handlepost(w http.ResponseWriter, r *http.Request)  {
 			body, err := ioutil.ReadAll(r.Body)
 			if err != nil {
 				http.Error(w, "Error reading request body",
@@ -36,7 +36,7 @@ func handlepost(w http.ResponseWriter, r *http.Request)  {
 			}
 			log.Printf(string(body))
 
-}
+}*/
 
 func helloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
