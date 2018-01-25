@@ -55,7 +55,7 @@ func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
 	
 		http.ServeFile(w,r,"../client/index.html")
 		time.Sleep(1 * time.Second)  //to handle concurrent requests
-		
+
 		/* the Data struct should customize a unique session,
 		 that's why we declare it when the a new root (/) request is made
 		which means that a new user opened a new session	(typed the root url)	
@@ -65,7 +65,7 @@ func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-	this function will handle all the events that occurs (as defined in the readme) 
+	this function will handle all the events that occurs (as defined in the description) 
 
 */
 func eventHandler(w http.ResponseWriter, r *http.Request) {
