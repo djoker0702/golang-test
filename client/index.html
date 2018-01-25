@@ -77,8 +77,9 @@ body {
     <script>
 
       // Detect screen resize : send the old and the new dimension after each resize operation
+      var oldDimmension = {"Height":window.innerHeight,"Width":window.innerWidth}
       $(document).ready(function(){
-          var oldDimmension = {"Height":window.innerHeight,"Width":window.innerWidth}    
+              
           $(window).resize(function(){
                 var newDimension = {"Height":window.innerHeight,"Width":window.innerWidth} 
                 //post to golang the old and the new 
@@ -86,7 +87,8 @@ body {
                     eventType: "screenResize",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
-                    Dimension: newDimension
+                    ODimension: newDimension,
+                    NDimension: oldDimmension
                 }
                 console.log(event)
                 // make a post to golang
@@ -112,6 +114,8 @@ body {
                     eventType: "timeTaken",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
+                    ODimension: oldDimmension,
+                    NDimension: {"Height":window.innerHeight,"Width":window.innerWidth},
                     time:Math.trunc((endTyping-startTyping)/1000)
               }
           console.log(event);
@@ -142,7 +146,6 @@ body {
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
                     pasted: true,
-                    copied:false,
                     formId: "inputEmail"}
                 console.log(event);
                 break;
@@ -152,7 +155,6 @@ body {
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
                     pasted: true,
-                    copied:false,
                     formId: "inputCardNumber"}
                 console.log(event);
                 break;
@@ -162,7 +164,6 @@ body {
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
                     pasted: true,
-                    copied:false,
                     formId: "inputCVV"}
                 console.log(event);
                 break;
@@ -184,7 +185,6 @@ body {
                     eventType: "copyAndPaste",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
-                    pasted: false,
                     copied:true,
                     formId: "inputEmail"}
                 console.log(event);
@@ -194,7 +194,6 @@ body {
                     eventType: "copyAndPaste",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
-                    pasted: false,
                     copied:true,
                     formId: "inputCardNumber"}
                 console.log(event);
@@ -204,7 +203,6 @@ body {
                     eventType: "copyAndPaste",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
-                    pasted: false,
                     copied:true,
                     formId: "inputCVV"}
                 console.log(event);
