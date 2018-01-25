@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -22,14 +23,6 @@ type helloWorldRequest struct {
 	Hello string `json:"hello"`
 }
 
-
-
-func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
-	
-		http.ServeFile(w,r,"../client/index.html")
-}
-
-
 type Data struct {
 	WebsiteUrl         string 
 	SessionId          string 
@@ -44,6 +37,8 @@ type Dimension struct {
 	Height int 
 }
 
+// this struct is the general format of all the json request that came from the frontend side
+// the Data struct will be built from the event struct (for each event that occur depending on the event type field )
 type event struct {
 	EventType		   string `json:"eventType"`
 	WebsiteUrl		   string `json:"websiteUrl"`
@@ -55,7 +50,25 @@ type event struct {
 	FormId			   string `json:"formId"`
 	Time               int `json:"time"`
 }
-var mappedData = &Data{CopyAndPaste :map[string]bool {"inputEmail": false,"inputCardNumber": false,"inputCVV": false}} 	
+var mappedData = &Data{}
+func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
+	
+		http.ServeFile(w,r,"../client/index.html")
+		time.Sleep(2 * time.Second)  //to handle concurrent requests
+		/* the Data struct should customize a unique session,
+		 that's why we declare it when the a new root (/) request is made
+		which means that a new user opened a new session		
+		and we define the CopyAndPaste map to false for each field of the form 
+		*/
+		mappedData = &Data{CopyAndPaste :map[string]bool {"inputEmail": false,"inputCardNumber": false,"inputCVV": false}} 	
+		
+		
+}
+
+/*
+	this function will handle all the events that occurs (as defined in the readme) 
+
+*/
 func eventHandler(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -65,12 +78,13 @@ func eventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req :=  &event{}
+	req :=  &event{} // the req is used to fetch data from the json that comes with the post request
 	if err = json.Unmarshal(body, req); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Unable to unmarshal JSON request"))
 		return
 	}
+	// mappedData as defined in line 63 is the Data struct that will be printed for each stage of its construction
 	mappedData.WebsiteUrl = req.WebsiteUrl
 	mappedData.SessionId = req.Session
 	switch event := req.EventType; event {
@@ -78,37 +92,22 @@ func eventHandler(w http.ResponseWriter, r *http.Request) {
 	case "screenResize" :
 		mappedData.ResizeFrom = req.ODimension	
 		mappedData.ResizeTo = req.NDimension
-		log.Printf("\nEvent : screenResize , Current state of the data :%+v", 
-		"\nWebsiteUrl :%+v " , mappedData.WebsiteUrl,
-		"\nSessionId :%+v" , mappedData.SessionId,
-		"\nResizeFrom :%+v" , mappedData.ResizeFrom,
-		"\nResizeTo :%+v" , mappedData.ResizeTo)
+		log.Printf("\nEvent : screenResize , Current state of the data :%+v", mappedData)
+
 	case "timeTaken": 
 		mappedData.FormCompletionTime = req.Time
 		mappedData.ResizeFrom = req.ODimension	
 		mappedData.ResizeTo = req.NDimension
-		log.Printf("\nEvent : Form submitted , Final state of the data :  %+v", 
-			"\nWebsiteUrl : ", mappedData.WebsiteUrl,
-			"\nSessionId : ", mappedData.SessionId,
-			"\nResizeFrom : ", mappedData.ResizeFrom,
-			"\nResizeTo : ", mappedData.ResizeTo,
-			"\nCopyAndPaste : ", mappedData.CopyAndPaste,
-			"\nFormCompletionTime : ", mappedData.FormCompletionTime)	
+		log.Printf("\nEvent : Form submitted , Final state of the data :  %+v", mappedData)
 	case "copyAndPaste":
 		mappedData.CopyAndPaste[req.FormId] = req.Copie || req.Paste
-		log.Printf("\nEvent : Copy and Paste detected , Current state of the data :  %+v", 
-			"\nWebsiteUrl : ", mappedData.WebsiteUrl,
-			"\nSessionId : ", mappedData.SessionId,
-			"\nCopyAndPaste : ", mappedData.CopyAndPaste)
-
+		log.Printf("\nEvent : Copy and Paste detected , Current state of the data :  %+v", mappedData)
 
 	}
 	w.WriteHeader(http.StatusOK)
     
 
 }
-
-
 
 func helloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)

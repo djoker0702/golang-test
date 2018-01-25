@@ -77,7 +77,7 @@ body {
     <script>
 
       // Detect screen resize : send the old and the new dimension after each resize operation
-      var oldDimmension = {"Height":window.innerHeight,"Width":window.innerWidth}
+      var oldDimension = {"Height":window.innerHeight,"Width":window.innerWidth}
       $(document).ready(function(){
               
           $(window).resize(function(){
@@ -87,38 +87,39 @@ body {
                     eventType: "screenResize",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
-                    ODimension: newDimension,
-                    NDimension: oldDimmension
+                    ODimension: oldDimension,
+                    NDimension: newDimension
                 }
-                // make a post to golang
+                // make a post to golang using ajax
                 $.ajax({
                     type: "POST",
                     data :JSON.stringify(event),
                     url: "api/event",
                     contentType: "application/json"
                 });
-                oldDimmension = newDimension
+                oldDimension = newDimension
                 });
            });
       var startTyping,endTyping ; // when first character is typed & form submitted
-      function startChrono() { // this fucntion will be triggred when the first character has been typed 
+      function startChrono() { // this fucntion will be called when the first character has been typed 
               
               var start = performance.now();
-              (start > startTyping) ? startTyping=startTyping:startTyping =start       // get the time when the first character has been typed 
-              
+              (start > startTyping) ? startTyping=startTyping:startTyping =start       // get the time when the first character has been typed               
         } 
 
-      function formSubmitted()
+      function formSubmitted() // this function is called when the submit button is clicked
         {
           endTyping = performance.now(); // get the time when the form is submitted 
           var event = {
                     eventType: "timeTaken",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
-                    ODimension: oldDimmension,
+                    ODimension: oldDimension,
                     NDimension: {"Height":window.innerHeight,"Width":window.innerWidth},
-                    time:Math.trunc((endTyping-startTyping)/1000)
+                    time:Math.trunc((endTyping-startTyping)/1000) 
+                    //calculate the time difference between when the first character was typed and when the form is submitted
               }
+
           $.ajax({
               type: "POST",
               data :JSON.stringify(event),
@@ -136,6 +137,7 @@ body {
       
       
       // Detect copy/paste of each field :
+      // post the event to go server for each copy paste operation
        function detectPaste(fieldid) {
             var event;
             switch (fieldid) {
