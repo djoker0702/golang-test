@@ -90,7 +90,7 @@ body {
                     ODimension: oldDimension,
                     NDimension: newDimension
                 }
-                // make a post to golang using ajax
+                // post to golang using ajax
                 $.ajax({
                     type: "POST",
                     data :JSON.stringify(event),
@@ -134,8 +134,6 @@ body {
 
       }
 
-      
-      
       // Detect copy/paste of each field :
       // post the event to go server for each copy paste operation
        function detectPaste(fieldid) {
@@ -210,10 +208,6 @@ body {
                     contentType: "application/json"
                 });
             }
-
-       
-
-
 
 </script>
    
