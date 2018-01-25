@@ -54,15 +54,13 @@ var mappedData = &Data{}
 func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
 	
 		http.ServeFile(w,r,"../client/index.html")
-		time.Sleep(2 * time.Second)  //to handle concurrent requests
+		time.Sleep(1 * time.Second)  //to handle concurrent requests
 		/* the Data struct should customize a unique session,
 		 that's why we declare it when the a new root (/) request is made
-		which means that a new user opened a new session		
-		and we define the CopyAndPaste map to false for each field of the form 
+		which means that a new user opened a new session	(typed the root url)	
+		and we define the CopyAndPaste map to false for each field of the form at  the beginning (to be updated later)
 		*/
-		mappedData = &Data{CopyAndPaste :map[string]bool {"inputEmail": false,"inputCardNumber": false,"inputCVV": false}} 	
-		
-		
+		mappedData = &Data{CopyAndPaste :map[string]bool {"inputEmail": false,"inputCardNumber": false,"inputCVV": false}} 			
 }
 
 /*
@@ -87,22 +85,30 @@ func eventHandler(w http.ResponseWriter, r *http.Request) {
 	// mappedData as defined in line 63 is the Data struct that will be printed for each stage of its construction
 	mappedData.WebsiteUrl = req.WebsiteUrl
 	mappedData.SessionId = req.Session
+	// maping json requests depending on the EventType (screenResize,timeTaken,copyAndPaste)
 	switch event := req.EventType; event {
 
 	case "screenResize" :
 		mappedData.ResizeFrom = req.ODimension	
 		mappedData.ResizeTo = req.NDimension
-		log.Printf("\nEvent : screenResize , Current state of the data :%+v", mappedData)
+		log.Printf("\nEvent : screenResize , Current state of the data : ") 
+		fmt.Println("WebsiteUrl : " , mappedData.WebsiteUrl) 
+		fmt.Println("SessionId : " , mappedData.SessionId) 
+		fmt.Println("ResizeFrom : {Width , Height} =  " , mappedData.ResizeFrom) 
+		fmt.Println("ResizeTo : {Width , Height} = " , mappedData.ResizeTo) 
 
 	case "timeTaken": 
 		mappedData.FormCompletionTime = req.Time
 		mappedData.ResizeFrom = req.ODimension	
 		mappedData.ResizeTo = req.NDimension
-		log.Printf("\nEvent : Form submitted , Final state of the data :  %+v", mappedData)
+		log.Printf("\nEvent : Form submitted , Final state of the data :  %+v+s", mappedData)
 	case "copyAndPaste":
 		mappedData.CopyAndPaste[req.FormId] = req.Copie || req.Paste
-		log.Printf("\nEvent : Copy and Paste detected , Current state of the data :  %+v", mappedData)
-
+		log.Printf("Event : Copy and Paste detected , Current state of the data :  ")
+		fmt.Println("WebsiteUrl : " + mappedData.WebsiteUrl) 
+		fmt.Println("SessionId : " + mappedData.SessionId) 
+		fmt.Println("CopyAndPaste : " , mappedData.CopyAndPaste )
+			
 	}
 	w.WriteHeader(http.StatusOK)
     
