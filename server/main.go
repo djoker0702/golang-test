@@ -101,7 +101,7 @@ func eventHandler(w http.ResponseWriter, r *http.Request) {
 		mappedData.FormCompletionTime = req.Time
 		mappedData.ResizeFrom = req.ODimension	
 		mappedData.ResizeTo = req.NDimension
-		log.Printf("\nEvent : Form submitted , Final state of the data :  %+v+s", mappedData)
+		log.Printf("\nEvent : Form submitted , Final state of the data :  %+v", mappedData)
 	case "copyAndPaste":
 		mappedData.CopyAndPaste[req.FormId] = req.Copie || req.Paste
 		log.Printf("Event : Copy and Paste detected , Current state of the data :  ")
@@ -109,6 +109,7 @@ func eventHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("SessionId : " + mappedData.SessionId) 
 		fmt.Println("CopyAndPaste : " , mappedData.CopyAndPaste )
 			
+
 	}
 	w.WriteHeader(http.StatusOK)
     
