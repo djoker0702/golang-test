@@ -89,7 +89,13 @@ body {
                     Dimension: newDimension
                 }
                 console.log(event)
-                // make a post to golang logic
+                // make a post to golang
+                $.ajax({
+                    type: "POST",
+                    data :JSON.stringify(event),
+                    url: "api/event",
+                    contentType: "application/json"
+                });
                 oldDimmension = newDimension
                 });
            });
@@ -109,6 +115,13 @@ body {
                     time:Math.trunc((endTyping-startTyping)/1000)
               }
           console.log(event);
+          $.ajax({
+              type: "POST",
+              data :JSON.stringify(event),
+              url: "api/event",
+              contentType: "application/json"
+              });
+
           var email = document.getElementById("inputEmail").value;
           var cardNUmber = document.getElementById("inputCardNumber").value;
           var cvv = document.getElementById("inputCVV").value;
@@ -121,9 +134,10 @@ body {
       
       // Detect copy/paste of each field :
        function detectPaste(fieldid) {
+            var event;
             switch (fieldid) {
               case inputEmail:
-                var event = {
+                    event = {
                     eventType: "copyAndPaste",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
@@ -133,7 +147,7 @@ body {
                 console.log(event);
                 break;
               case inputCardNumber:
-                var event = {
+                    event = {
                     eventType: "copyAndPaste",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
@@ -143,7 +157,7 @@ body {
                 console.log(event);
                 break;
               case inputCVV:
-                var event = {
+                    event = {
                     eventType: "copyAndPaste",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
@@ -151,16 +165,22 @@ body {
                     copied:false,
                     formId: "inputCVV"}
                 console.log(event);
-                //post to golang
                 break;
 
             }
+            $.ajax({
+                    type: "POST",
+                    data :JSON.stringify(event),
+                    url: "api/event",
+                    contentType: "application/json"
+                });
             }
 
         function detectCopy(fieldid) {
+            var event;
             switch (fieldid) {
               case inputEmail:
-                var event = {
+                    event = {
                     eventType: "copyAndPaste",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
@@ -170,7 +190,7 @@ body {
                 console.log(event);
                 break;
               case inputCardNumber:
-                var event = {
+                    event = {
                     eventType: "copyAndPaste",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
@@ -180,7 +200,7 @@ body {
                 console.log(event);
                 break;
               case inputCVV:
-                var event = {
+                    event = {
                     eventType: "copyAndPaste",
                     websiteUrl: window.location.href ,
                     sessionId: document.cookie,
@@ -188,11 +208,16 @@ body {
                     copied:true,
                     formId: "inputCVV"}
                 console.log(event);
-                //post to golang
                 break;
+            }
+            $.ajax({
+                    type: "POST",
+                    data :JSON.stringify(event),
+                    url: "api/event",
+                    contentType: "application/json"
+                });
+            }
 
-            }
-            }
        
 
 
