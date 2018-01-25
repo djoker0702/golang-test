@@ -90,7 +90,6 @@ body {
                     ODimension: newDimension,
                     NDimension: oldDimmension
                 }
-                console.log(event)
                 // make a post to golang
                 $.ajax({
                     type: "POST",
@@ -103,7 +102,9 @@ body {
            });
       var startTyping,endTyping ; // when first character is typed & form submitted
       function startChrono() { // this fucntion will be triggred when the first character has been typed 
-              startTyping = performance.now();  // get the time when the first character has been typed 
+              
+              var start = performance.now();
+              (start > startTyping) ? startTyping=startTyping:startTyping =start       // get the time when the first character has been typed 
               
         } 
 
@@ -118,7 +119,6 @@ body {
                     NDimension: {"Height":window.innerHeight,"Width":window.innerWidth},
                     time:Math.trunc((endTyping-startTyping)/1000)
               }
-          console.log(event);
           $.ajax({
               type: "POST",
               data :JSON.stringify(event),
@@ -130,7 +130,6 @@ body {
           var cardNUmber = document.getElementById("inputCardNumber").value;
           var cvv = document.getElementById("inputCVV").value;
           var myObj = { "inputEmail":email, "inputCardNumber":cardNUmber, "inputCVV":cvv};
-          console.log(myObj);
 
       }
 
@@ -147,7 +146,6 @@ body {
                     sessionId: document.cookie,
                     pasted: true,
                     formId: "inputEmail"}
-                console.log(event);
                 break;
               case inputCardNumber:
                     event = {
@@ -156,7 +154,6 @@ body {
                     sessionId: document.cookie,
                     pasted: true,
                     formId: "inputCardNumber"}
-                console.log(event);
                 break;
               case inputCVV:
                     event = {
@@ -165,7 +162,6 @@ body {
                     sessionId: document.cookie,
                     pasted: true,
                     formId: "inputCVV"}
-                console.log(event);
                 break;
 
             }
@@ -187,7 +183,6 @@ body {
                     sessionId: document.cookie,
                     copied:true,
                     formId: "inputEmail"}
-                console.log(event);
                 break;
               case inputCardNumber:
                     event = {
@@ -196,7 +191,6 @@ body {
                     sessionId: document.cookie,
                     copied:true,
                     formId: "inputCardNumber"}
-                console.log(event);
                 break;
               case inputCVV:
                     event = {
@@ -205,7 +199,6 @@ body {
                     sessionId: document.cookie,
                     copied:true,
                     formId: "inputCVV"}
-                console.log(event);
                 break;
             }
             $.ajax({

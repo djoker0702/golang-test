@@ -55,7 +55,7 @@ type event struct {
 	FormId			   string `json:"formId"`
 	Time               int `json:"time"`
 }
-
+var mappedData = &Data{CopyAndPaste :map[string]bool {"inputEmail": false,"inputCardNumber": false,"inputCVV": false}} 	
 func eventHandler(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -71,20 +71,18 @@ func eventHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Unable to unmarshal JSON request"))
 		return
 	}
-
-	mappedData := &Data{CopyAndPaste : map[string]bool {"inputEmail": false,"inputCardNumber": false,"inputCVV": false},
-	WebsiteUrl:  req.WebsiteUrl, SessionId:req.Session}
-
+	mappedData.WebsiteUrl = req.WebsiteUrl
+	mappedData.SessionId = req.Session
 	switch event := req.EventType; event {
 
 	case "screenResize" :
 		mappedData.ResizeFrom = req.ODimension	
 		mappedData.ResizeTo = req.NDimension
-		log.Printf("\nEvent : screenResize , Current state of the data :  %+v", 
-			"\nWebsiteUrl : ", mappedData.WebsiteUrl,
-			"\nSessionId : ", mappedData.SessionId,
-			"\nResizeFrom : ", mappedData.ResizeFrom,
-			"\nResizeTo : ", mappedData.ResizeTo)
+		log.Printf("\nEvent : screenResize , Current state of the data :%+v", 
+		"\nWebsiteUrl :%+v " , mappedData.WebsiteUrl,
+		"\nSessionId :%+v" , mappedData.SessionId,
+		"\nResizeFrom :%+v" , mappedData.ResizeFrom,
+		"\nResizeTo :%+v" , mappedData.ResizeTo)
 	case "timeTaken": 
 		mappedData.FormCompletionTime = req.Time
 		mappedData.ResizeFrom = req.ODimension	
@@ -94,21 +92,17 @@ func eventHandler(w http.ResponseWriter, r *http.Request) {
 			"\nSessionId : ", mappedData.SessionId,
 			"\nResizeFrom : ", mappedData.ResizeFrom,
 			"\nResizeTo : ", mappedData.ResizeTo,
-			"\nFormCompletionTime : ", mappedData.FormCompletionTime)
+			"\nCopyAndPaste : ", mappedData.CopyAndPaste,
+			"\nFormCompletionTime : ", mappedData.FormCompletionTime)	
 	case "copyAndPaste":
 		mappedData.CopyAndPaste[req.FormId] = req.Copie || req.Paste
 		log.Printf("\nEvent : Copy and Paste detected , Current state of the data :  %+v", 
 			"\nWebsiteUrl : ", mappedData.WebsiteUrl,
 			"\nSessionId : ", mappedData.SessionId,
-			"\nResizeFrom : ", mappedData.ResizeFrom,
-			"\nResizeTo : ", mappedData.ResizeTo,
 			"\nCopyAndPaste : ", mappedData.CopyAndPaste)
 
+
 	}
-
-	//log.Printf("Request received %+v", req)
-	//log.Printf("Mapped Data : %+v", mappedData)
-
 	w.WriteHeader(http.StatusOK)
     
 
