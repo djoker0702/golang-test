@@ -107,8 +107,7 @@ func eventHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Event : Copy and Paste detected , Current state of the data :  ")
 		fmt.Println("WebsiteUrl : " + mappedData.WebsiteUrl) 
 		fmt.Println("SessionId : " + mappedData.SessionId) 
-		fmt.Println("CopyAndPaste : " , mappedData.CopyAndPaste )
-			
+		fmt.Println("CopyAndPaste : " , mappedData.CopyAndPaste )		
 
 	}
 	w.WriteHeader(http.StatusOK)
